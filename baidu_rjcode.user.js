@@ -14,10 +14,11 @@
 // @grant       none
 // ==/UserScript==
 
-document.addEventListener("DOMContentLoaded", function () {
+function rjcatch() {
     for (var node of document.querySelectorAll('.filename')) {
         var rj = node.title.match(/RJ\d{6}/)
-        if (rj) {
+        var isAdded = node.parentNode.childNodes.length > 1
+        if (rj && !isAdded) {
             var djvoice = 'http://www.doujinvoice.moe/maniax/work/=/product_id/' + rj + '.html'
             var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/' + rj + '.html'
             var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
@@ -26,4 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
             node.parentNode.insertBefore(newNode, node.parentNode.childNodes[0])
         }    
     }
-})
+}
+
+document.addEventListener("DOMContentLoaded", rjcatch)
+window.onclick = rjcatch
