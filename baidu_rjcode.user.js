@@ -22,9 +22,9 @@ function rjcatch() {
             var djvoice = 'http://www.doujinvoice.moe/maniax/work/=/product_id/' + rj + '.html'
             var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/' + rj + '.html'
             var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
-            var newNode = document.createElement('span')
-            newNode.innerHTML = '<span>详情：</span><a href="' + djvoice + '" target="_blank"> Doujinvoice </a><a href="' + dlsite + '" target="_blank"> DLSite </a><a href="' + hvdb + '" target="_blank"> HVDB </a><span> | </span>'
-            node.parentNode.insertBefore(newNode, node.parentNode.childNodes[0])
+            var ele = document.createElement('span')
+            ele.innerHTML = '<span>详情：</span><a href="' + djvoice + '" target="_blank"> Doujinvoice </a><a href="' + dlsite + '" target="_blank"> DLSite </a><a href="' + hvdb + '" target="_blank"> HVDB </a><span> | </span>'
+            node.parentNode.insertBefore(ele, node)
         }    
     }
 }
