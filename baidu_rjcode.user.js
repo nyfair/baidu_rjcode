@@ -15,7 +15,6 @@
 // ==/UserScript==
 
 function rjcatch() {
-    console.log('abc')
     for (var node of document.querySelectorAll('.filename')) {
         var rj = node.title.match(/RJ\d{6}/)
         var isAdded = node.parentNode.childNodes.length > 1
