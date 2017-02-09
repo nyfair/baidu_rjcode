@@ -15,6 +15,7 @@
 // ==/UserScript==
 
 function rjcatch() {
+    console.log('abc')
     for (var node of document.querySelectorAll('.filename')) {
         var rj = node.title.match(/RJ\d{6}/)
         var isAdded = node.parentNode.childNodes.length > 1
@@ -29,15 +30,14 @@ function rjcatch() {
     }
 }
 
+function trigger() {
+    window.setTimeout(rjcatch, 500)
+}
+
 function init() {
     rjcatch()
-    window.onhashchange = function() {
-        var list = document.querySelector('.list-view')
-        list.addEventListener('DOMSubtreeModified', function() {
-            rjcatch()
-            list.removeEventListener('DOMSubtreeModified')
-        })
-    }
+    var list = document.querySelector('.history-list-tips')
+    list.addEventListener('DOMSubtreeModified', trigger)
 }
 
 document.addEventListener('DOMContentLoaded', init)
