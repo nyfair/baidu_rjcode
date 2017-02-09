@@ -29,5 +29,15 @@ function rjcatch() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", rjcatch)
-window.onclick = rjcatch
+function init() {
+    rjcatch()
+    window.onhashchange = function() {
+        var list = document.querySelector('.list-view')
+        list.addEventListener('DOMSubtreeModified', function() {
+            rjcatch()
+            list.removeEventListener('DOMSubtreeModified')
+        })
+    }
+}
+
+document.addEventListener('DOMContentLoaded', init)
