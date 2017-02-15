@@ -19,11 +19,10 @@ function rjcatch() {
         var rj = node.title.match(/RJ\d{6}/)
         var isAdded = node.parentNode.childNodes.length > 1
         if (rj && !isAdded) {
-            var djvoice = 'http://www.doujinvoice.moe/maniax/work/=/product_id/' + rj + '.html'
             var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/' + rj + '.html'
             var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
             var ele = document.createElement('span')
-            ele.innerHTML = '<span>详情：</span><a href="' + djvoice + '" target="_blank"> Doujinvoice </a><a href="' + dlsite + '" target="_blank"> DLSite </a><a href="' + hvdb + '" target="_blank"> HVDB </a><span> | </span>'
+            ele.innerHTML = '<span>详情： </span><a href="' + dlsite + '" target="_blank"> DLSite </a><a href="' + hvdb + '" target="_blank"> HVDB </a><span> | </span>'
             node.parentNode.insertBefore(ele, node)
         }    
     }
