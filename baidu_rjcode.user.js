@@ -16,14 +16,14 @@
 
 function rjcatch() {
     for (var node of document.querySelectorAll('.filename')) {
-        var rj = node.title.match(/RJ\d{6}/)
+        var rj = node.title.split('.')[0].length == 6 ? 'RJ' + node.title.match(/\d{6}/) : node.title.match(/RJ\d{6}/)
         var isAdded = node.parentNode.childNodes.length > 1
-        if (rj && !isAdded) {
+        if (rj && !isAdded && rj != 'RJ') {
             var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/' + rj + '.html'
             var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
             var ele = document.createElement('span')
-            ele.innerHTML = '<span>详情： </span><a href="' + dlsite + '" target="_blank"> DLSite </a><a href="' + hvdb + '" target="_blank"> HVDB </a><span> | </span>'
-            node.parentNode.insertBefore(ele, node)
+            ele.innerHTML = ' | 详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a>'
+            node.parentNode.insertBefore(ele, node.nextSibling)
         }    
     }
 }
