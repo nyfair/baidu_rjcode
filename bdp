@@ -37,9 +37,10 @@ argc = len(sys.argv)
 if argc == 1:
 	print('Usage bdp url pw')
 	sys.exit(1)
-link = 'http://api.pescn.top/sharelinks?shareurl=' + getBDLink(sys.argv[1])
-if argc > 2:
-	link += '&pass=%s' % sys.argv[2][-4:]
+longFlag = 2 if sys.argv[1].find('链接') > -1 else 1
+link = 'http://api.pescn.top/sharelinks?shareurl=' + getBDLink(sys.argv[longFlag])
+if argc > longFlag * 2:
+	link += '&pass=%s' % sys.argv[-1][-4:]
 resp = json.loads(request.urlopen(link).read())
 print('Error Number: %s' % resp['errno'])
 print('Error Message: %s' % resp['message'])
