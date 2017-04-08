@@ -17,7 +17,8 @@
 function rjcatch() {
 	for (var node of document.querySelectorAll('.filename')) {
 		var code = (node.title.split('.')[0].length == 6) ? 'RJ' + node.title.match(/\d{6}/) : node.title.match(/RJ\d{6}/)
-		var rj = Number(code.toString().substr(2))
+		if (code)
+			var rj = Number(code.toString().substr(2))
 		var isAdded = node.parentNode.childNodes.length > 1
 		if (rj && !isAdded) {
 			var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/RJ' + rj + '.html'
