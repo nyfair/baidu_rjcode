@@ -17,16 +17,17 @@
 function rjcatch() {
 	for (var node of document.querySelectorAll('.filename')) {
 		var code = (node.title.split('.')[0].length == 6) ? 'RJ' + node.title.match(/\d{6}/) : node.title.match(/RJ\d{6}/)
-		if (code)
+		if (code) {
 			var rj = Number(code.toString().substr(2))
-		var isAdded = node.parentNode.childNodes.length > 1
-		if (rj && !isAdded) {
-			var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/RJ' + rj + '.html'
-			var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + rj
-			var ele = document.createElement('span')
-			ele.innerHTML = ' | 详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a>'
-			node.parentNode.insertBefore(ele, node.nextSibling)
-		}    
+			var isAdded = node.parentNode.childNodes.length > 1
+			if (rj && !isAdded) {
+				var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/RJ' + rj + '.html'
+				var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + rj
+				var ele = document.createElement('span')
+				ele.innerHTML = ' | 详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a>'
+				node.parentNode.insertBefore(ele, node.nextSibling)
+			}
+		}
 	}
 }
 
