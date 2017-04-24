@@ -1,13 +1,24 @@
 #!python3
 
+import hashlib
 import json
+import os
 import sys
-from urllib import request
+from urllib import parse, request
 
-RPC = 'http://localhost:6800/jsonrpc'
+BDP_API = 'http://api.pescn.top/'
+ARIA2_RPC = 'http://localhost:6800/jsonrpc'
 PRESET_OPTS = { 'continue': 'true', 'max-connection-per-server': 16, 'split': 16, 'min-split-size': '1M',
 								'user-agent': 'netdisk;5.5.2.0;PC;PC-Windows;10.0.14393;WindowsBaiduNetdisk',
 								'referer': 'http://pan.baidu.com/disk/home'}
+
+def help():
+	print('Input file/directory ID to download a file or enter the specify directory')
+	# print('Split file IDs with whitespace to download multi files')
+	# print('Use * to download all files in current directory')
+	print('Use b to return previous directory')
+	print('Use r to enter root directory')
+	print('Use x to exit')
 
 def download(urls, fname):
 	jsondict = {'jsonrpc':'2.0', 'id':'aria2rpc', 'method':'aria2.addUri', 'params':[urls]}
@@ -15,35 +26,62 @@ def download(urls, fname):
 	aria2opts['out'] = fname
 	jsondict['params'].append(aria2opts)
 	jsonreq = json.dumps(jsondict).encode('utf-8')
-	request.urlopen(RPC, jsonreq)
+	request.urlopen(ARIA2_RPC, jsonreq)
 
-def getBDLink(url):
-	if len(url) == 8:
-		return 'https://pan.baidu.com/s/' + url
+def rest(api, query, payload = None):
+	data = None if payload is None else parse.urlencode(payload).encode()
+	resp = request.urlopen('%s%s?%s' % (BDP_API, api, parse.urlencode(query)), data)
+	return json.load(resp)
+
+def cd(path):
+	files = rest('filelist', {'token':token, 'uk':uk, 'path':path})['list']
+	for i, f in enumerate(files):
+		print('%d\t%s\t%s' % (i+1, f['server_filename'], 'Directory' if f['isdir'] == 1 else f['size']))
+	return files
+
+def fetch(files):
+	links = rest('filelinks', {'token':token, 'uk':uk}, {'files':files})['links']
+	for fname in links.keys():
+		download(links[fname], fname)
+		print('Start download %s' % fname)
+
+def login():
+	try:
+		name = os.environ['BDP_NAME']
+		password = os.environ['BDP_PASSWORD']
+	except KeyError:
+		name = input('name:')
+		password = input('password:')
+	m = hashlib.md5()
+	m.update(password.encode())
+	token = rest('login', {'security':'md5'}, {'name':name, 'password':m.hexdigest()})['token']
+	user = rest('userlist', {'token':token})['userlist'][0]
+	return token, user['Uk']
+
+def step(cmd):
+	global cur_path, cur_data
+	if cmd == 'x':
+		sys.exit(0)
+	elif cmd == 'r':
+		cur_path = '/'
+		cur_data = cd(cur_path)
+	elif cmd == 'b':
+		cur_path = cur_path[:cur_path.rfind('/')+1]
+		cur_data = cd(cur_path)
+	elif cmd.isdigit():
+		f = cur_data[int(cmd)-1]
+		if f['isdir'] == 1:
+			cur_path = f['path']
+			cur_data = cd(cur_path)
+		else:
+			fetch([f])
 	else:
-		return 'https://' + url[url.index('pan.'):]
+		help()
 
-def normalize(fname):
-	i = fname.find('RJ')
-	o = fname.rfind('.')
-	ext = fname[o:]
-	if i > -1 and fname[i+2:i+8].isdigit():
-		return fname[i:i+8] + ext
-	if o == 6 and fname[:6].isdigit():
-		return 'RJ' + fname[:6] + ext
-	return fname
-
-argc = len(sys.argv)
-if argc == 1:
-	print('Usage bdp url pw')
-	sys.exit(1)
-longFlag = 2 if sys.argv[1].find('链接') > -1 else 1
-link = 'http://api.pescn.top/sharelinks?shareurl=' + getBDLink(sys.argv[longFlag])
-if argc > longFlag * 2:
-	link += '&pass=%s' % sys.argv[-1][-4:]
-resp = json.loads(request.urlopen(link).read())
-print('Error Number: %s' % resp['errno'])
-print('Error Message: %s' % resp['message'])
-for fname in resp['links'].keys():
-	print('Start download %s' % fname)
-	download(resp['links'][fname], normalize(fname))
+token, uk = login()
+cur_path = None
+cur_data = None
+step('r')
+while True:
+	cmd = input('input:')
+	step(cmd)
