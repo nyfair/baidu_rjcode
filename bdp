@@ -14,11 +14,12 @@ PRESET_OPTS = { 'continue': 'true', 'max-connection-per-server': 16, 'split': 16
 
 def help():
 	print('Input file/directory ID to download a file or enter the specify directory')
-	# print('Split file IDs with whitespace to download multi files')
-	# print('Use * to download all files in current directory')
+	print('Split file IDs with whitespace to download multi files')
+	print('Use * to download all files in current directory')
 	print('Use b to return previous directory')
 	print('Use r to enter root directory')
 	print('Use x to exit')
+	print('Tips: For simplify usage, use "bdp [folder]" to download all files under [folder]')
 
 def download(urls, fname):
 	jsondict = {'jsonrpc':'2.0', 'id':'aria2rpc', 'method':'aria2.addUri', 'params':[urls]}
@@ -75,13 +76,28 @@ def step(cmd):
 			cur_data = cd(cur_path)
 		else:
 			fetch([f])
+	elif cmd == '*':
+		files = list(filter(lambda f:f['isdir'] == 0, cur_data))
+		fetch(files)
+	elif cmd.find(' ') > 0:
+		files = []
+		for i in cmd.split(' '):
+			if i.isdigit():
+				f = cur_data[int(i)-1]
+				if f['isdir'] == 0:
+					files.append(f)
+		fetch(files)
 	else:
 		help()
 
 token, uk = login()
-cur_path = None
-cur_data = None
-step('r')
-while True:
-	cmd = input('input:')
-	step(cmd)
+if len(sys.argv) == 1:
+	cur_path = cur_data = None
+	step('r')
+	while True:
+		cmd = input('input:')
+		step(cmd)
+else:
+	cur_path = '/%s' % sys.argv[-1]
+	cur_data = cd(cur_path)
+	step('*')
