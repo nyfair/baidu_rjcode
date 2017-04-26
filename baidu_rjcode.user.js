@@ -23,7 +23,7 @@ function rjcatch() {
 				var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/' + rj + '.html'
 				var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
 				var ele = document.createElement('span')
-				ele.innerHTML = ' | 详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a>'
+				ele.innerHTML = '详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a> | '
 				node.parentNode.insertBefore(ele, node)
 				continue
 			}
@@ -35,7 +35,7 @@ function rjcatch() {
 				}
 				var dlink = 'http://www.dmm.co.jp/dc/doujin/-/detail/=/cid=' + dmm
 				var ele = document.createElement('span')
-				ele.innerHTML = ' | 详情： <a href="' + dlink + '" target="_blank"> DMM </a>'
+				ele.innerHTML = '详情： <a href="' + dlink + '" target="_blank"> DMM </a> | '
 				node.parentNode.insertBefore(ele, node)
 			}
 		}
