@@ -18,8 +18,9 @@ def help():
 	print('Use * to download all files in current directory')
 	print('Use b to return previous directory')
 	print('Use r to enter root directory')
+	print('Use f to force refresh current directory, otherwise we will read the structure from cache')
 	print('Use x to exit')
-	print('Tips: For simplify usage, use "bdp [folder]" to download all files under [folder]')
+	print('For download share links, use "bdp [link] {password}", [link] can be http://pan.baidu.com/s/1xxOOO00 or simply 1xxOOO00,"bdp 链接: [link] {密码: {password}}" is also supported.')
 
 def download(urls, fname):
 	jsondict = {'jsonrpc':'2.0', 'id':'aria2rpc', 'method':'aria2.addUri', 'params':[urls]}
@@ -34,17 +35,31 @@ def rest(api, query, payload = None):
 	resp = request.urlopen('%s%s?%s' % (BDP_API, api, parse.urlencode(query)), data)
 	return json.load(resp)
 
-def cd(path):
-	files = rest('filelist', {'token':token, 'uk':uk, 'path':path})['list']
+def cd(path, cache = True):
+	if cache and path in datas:
+		files = datas[path]
+	else:
+		if uk is None:
+			files = rest('sharefiles', {'token':token, 'path':path})['list']
+		else:
+			files = rest('filelist', {'token':token, 'uk':uk, 'path':path})['list']
+		datas[path] = files
 	for i, f in enumerate(files):
 		print('%d\t%s\t%s' % (i+1, f['server_filename'], 'Directory' if f['isdir'] == 1 else f['size']))
 	return files
 
 def fetch(files):
-	links = rest('filelinks', {'token':token, 'uk':uk}, {'files':files})['links']
+	if uk is None:
+		f = list(map(lambda x:x['path'], files))
+		payload = parse.quote_plus(json.dumps(f))
+		resp = request.urlopen('%ssharelinks?token=%s' % (BDP_API, token), ('filelist='+payload).encode())
+		links = json.load(resp)['links']
+	else:
+		f = list(map(lambda x:{'isdir':0, 'path':x['path'], 'server_filename': x['server_filename'], 'md5':x['md5']}, files))
+		links = rest('filelinks', {'token':token, 'uk':uk}, {'files':f})['links']
 	for fname in links.keys():
 		download(links[fname], fname)
-		print('Start download %s' % fname)
+		print('Start download ' + fname)
 
 def login():
 	try:
@@ -59,45 +74,56 @@ def login():
 	user = rest('userlist', {'token':token})['userlist'][0]
 	return token, user['Uk']
 
-def step(cmd):
-	global cur_path, cur_data
+def step(cmd, cur_path = '/'):
 	if cmd == 'x':
 		sys.exit(0)
+	elif cmd == 'f':
+		cd(cur_path, False)
 	elif cmd == 'r':
-		cur_path = '/'
-		cur_data = cd(cur_path)
+		cd(cur_path)
 	elif cmd == 'b':
 		cur_path = cur_path[:cur_path.rfind('/')+1]
-		cur_data = cd(cur_path)
+		cd(cur_path)
 	elif cmd.isdigit():
-		f = cur_data[int(cmd)-1]
+		f = datas[cur_path][int(cmd)-1]
 		if f['isdir'] == 1:
 			cur_path = f['path']
-			cur_data = cd(cur_path)
+			cd(cur_path)
 		else:
 			fetch([f])
 	elif cmd == '*':
-		files = list(filter(lambda f:f['isdir'] == 0, cur_data))
+		files = list(filter(lambda f:f['isdir'] == 0, datas[cur_path]))
 		fetch(files)
 	elif cmd.find(' ') > 0:
 		files = []
 		for i in cmd.split(' '):
 			if i.isdigit():
-				f = cur_data[int(i)-1]
+				f = datas[cur_path][int(i)-1]
 				if f['isdir'] == 0:
 					files.append(f)
 		fetch(files)
 	else:
 		help()
+	return cur_path
 
-token, uk = login()
-if len(sys.argv) == 1:
-	cur_path = cur_data = None
-	step('r')
-	while True:
-		cmd = input('input:')
-		step(cmd)
+def getBDLink(url):
+	if len(url) == 8:
+		return 'http://pan.baidu.com/s/' + url
+	else:
+		return 'http://' + url[url.index('pan.'):]
+
+datas = {}
+argc = len(sys.argv)
+if argc == 1:
+	token, uk = login()
 else:
-	cur_path = '/%s' % sys.argv[-1]
-	cur_data = cd(cur_path)
-	step('*')
+	longFlag = 2 if sys.argv[1].find('链接') > -1 and len(sys.argv[1]) < 8 else 1
+	q = {'shareurl': getBDLink(sys.argv[longFlag])}
+	if argc > longFlag * 2:
+		q['pass'] = sys.argv[-1][-4:]
+	token = rest('sharefiles', q)['token']
+	uk = None
+cur_path = step('f')
+while True:
+	cmd = input('input:')
+	cur_path = step(cmd, cur_path)
