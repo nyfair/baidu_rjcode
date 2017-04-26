@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        百度云DLSite编号分析
+// @name        百度云DLSite/DMM同人音声编号分析
 // @namespace   RJCode
-// @version     0.1
-// @description 分析RJ编号，提供DLSite/Doujinvoice/HVDB链接
+// @version     0.2
+// @description 分析RJ编号，提供DLSite/Doujinvoice/DMM/HVDB链接
 // @author      bdtrysb
 // @match       *://pan.baidu.com/disk/home*
 // @match       *://yun.baidu.com/disk/home*
@@ -16,15 +16,26 @@
 
 function rjcatch() {
 	for (var node of document.querySelectorAll('.filename')) {
-		var code = (node.title.split('.')[0].length == 6) ? 'RJ' + node.title.match(/\d{6}/) : node.title.match(/RJ\d{6}/)
-		if (code) {
-			var rj = Number(code.toString().substr(2))
-			var isAdded = node.parentNode.childNodes.length > 1
-			if (rj && !isAdded) {
-				var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/RJ' + rj + '.html'
-				var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + rj
+		var flag = node.parentNode.childNodes.length == 1
+		if (flag) {
+			var rj = node.title.match(/RJ\d{6}/)
+			if (rj) {
+				var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/' + rj + '.html'
+				var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
 				var ele = document.createElement('span')
 				ele.innerHTML = ' | 详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a>'
+				node.parentNode.insertBefore(ele, node.nextSibling)
+				continue
+			}
+			var dmm = node.title.match(/d_\d{6}|d_[a-z]{3,5}\d{4}/)
+			if (dmm) {
+				var zero = node.title.indexOf('zero')
+				if (zero > -1 && zero - node.title.indexOf(dmm) == dmm[0].length) {
+					dmm += 'zero'
+				}
+				var dlink = 'http://www.dmm.co.jp/dc/doujin/-/detail/=/cid=' + dmm
+				var ele = document.createElement('span')
+				ele.innerHTML = ' | 详情： <a href="' + dlink + '" target="_blank"> DMM </a>'
 				node.parentNode.insertBefore(ele, node.nextSibling)
 			}
 		}
