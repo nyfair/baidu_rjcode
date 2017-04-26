@@ -24,7 +24,7 @@ function rjcatch() {
 				var hvdb = 'http://hvdb.me/Dashboard/WorkDetails/' + Number(rj.toString().substr(2))
 				var ele = document.createElement('span')
 				ele.innerHTML = ' | 详情： <a href="' + hvdb + '" target="_blank"> HVDB </a><a href="' + dlsite + '" target="_blank"> DLSite </a>'
-				node.parentNode.insertBefore(ele, node.nextSibling)
+				node.parentNode.insertBefore(ele, node)
 				continue
 			}
 			var dmm = node.title.match(/d_\d{6}|d_[a-z]{3,5}\d{4}/)
@@ -36,7 +36,7 @@ function rjcatch() {
 				var dlink = 'http://www.dmm.co.jp/dc/doujin/-/detail/=/cid=' + dmm
 				var ele = document.createElement('span')
 				ele.innerHTML = ' | 详情： <a href="' + dlink + '" target="_blank"> DMM </a>'
-				node.parentNode.insertBefore(ele, node.nextSibling)
+				node.parentNode.insertBefore(ele, node)
 			}
 		}
 	}
