@@ -30,9 +30,15 @@ def download(urls, fname):
 	jsonreq = json.dumps(jsondict).encode('utf-8')
 	request.urlopen(ARIA2_RPC, jsonreq)
 
+def urlencode(m):
+	raw = ''
+	for k, v in m.items():
+		raw += '%s=%s&' % (k, parse.quote_plus(v) if type(v) == str else parse.quote_plus(json.dumps(v)))
+	return raw[:-1]
+
 def rest(api, query, payload = None):
-	data = None if payload is None else parse.urlencode(payload).encode()
-	resp = request.urlopen('%s%s?%s' % (BDP_API, api, parse.urlencode(query)), data)
+	data = None if payload is None else urlencode(payload).encode('utf-8')
+	resp = request.urlopen('%s%s?%s' % (BDP_API, api, urlencode(query)), data)
 	return json.load(resp)
 
 def cd(path, cache = True):
@@ -51,9 +57,7 @@ def cd(path, cache = True):
 def fetch(files):
 	if uk is None:
 		f = list(map(lambda x:x['path'], files))
-		payload = parse.quote_plus(json.dumps(f))
-		resp = request.urlopen('%ssharelinks?token=%s' % (BDP_API, token), ('filelist='+payload).encode())
-		links = json.load(resp)['links']
+		links = rest('sharelinks', {'token':token}, {'filelist':f})['links']
 	else:
 		f = list(map(lambda x:{'isdir':0, 'path':x['path'], 'server_filename': x['server_filename'], 'md5':x['md5']}, files))
 		links = rest('filelinks', {'token':token, 'uk':uk}, {'files':f})['links']
