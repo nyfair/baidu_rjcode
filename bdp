@@ -59,8 +59,7 @@ def fetch(files):
 		f = list(map(lambda x:x['path'], files))
 		links = rest('sharelinks', {'token':token}, {'filelist':f})['links']
 	else:
-		f = list(map(lambda x:{'isdir':0, 'path':x['path'], 'server_filename': x['server_filename'], 'md5':x['md5']}, files))
-		links = rest('filelinks', {'token':token, 'uk':uk}, {'files':f})['links']
+		links = rest('filelinks', {'token':token, 'uk':uk}, {'files':files})['links']
 	for fname in links.keys():
 		download(links[fname], fname)
 		print('Start download ' + fname)
