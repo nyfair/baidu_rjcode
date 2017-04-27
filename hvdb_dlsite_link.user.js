@@ -11,9 +11,12 @@
 var titleNode = document.querySelector('h2')
 var rj = titleNode.innerText.match(/\d{6}/)
 var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/RJ' + rj + '.html'
-titleNode.innerHTML = '<a href="' + dlsite + '" target="_blank">' + titleNode.innerText + '</a>'
+titleNode.innerHTML = '<a href="' + dlsite + '" target="_blank">DLSite Links</a> RJ' + rj
 
 var dlNode = document.querySelector('#Download')
 if (dlNode.value) {
-	titleNode.innerHTML += '<input class="form-control nav-form add-form" type="text" value=' + dlNode.value +'>'
+	var ele = document.createElement('input')
+	ele.className = 'form-control'
+	ele.value = dlNode.value
+	dlNode.parentNode.replaceChild(ele, dlNode.previousElementSibling)
 }
