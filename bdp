@@ -13,14 +13,14 @@ PRESET_OPTS = { 'continue': 'true', 'max-connection-per-server': 16, 'split': 16
 								'referer': 'http://pan.baidu.com/disk/home'}
 
 def help():
-	print('Input file/directory ID to download a file or enter the specify directory')
+	print('Input file/directory ID to download a file or enter specify directory')
 	print('Split file IDs with whitespace to download multi files')
 	print('Use * to download all files in current directory')
-	print('Use b to return previous directory')
+	print('Use b to return to previous directory')
 	print('Use r to enter root directory')
 	print('Use f to force refresh current directory, otherwise we will read the structure from cache')
 	print('Use x to exit')
-	print('For download share links, use "bdp [link] {password}", [link] can be http://pan.baidu.com/s/1xxOOO00 or simply 1xxOOO00,"bdp 链接: [link] {密码: {password}}" is also supported.')
+	print('To download shared links, use "bdp <link> [password]", <link> can be http://pan.baidu.com/s/1xxOOO00 or simply 1xxOOO00,"bdp 链接: <link> [密码: [password]]" is also supported.')
 
 def download(urls, fname):
 	jsondict = {'jsonrpc':'2.0', 'id':'aria2rpc', 'method':'aria2.addUri', 'params':[urls]}
