@@ -117,16 +117,23 @@ def getBDLink(url):
 
 datas = {}
 argc = len(sys.argv)
-if argc == 1:
-	token, uk = login()
-else:
-	longFlag = 2 if sys.argv[1].find('链接') > -1 and len(sys.argv[1]) < 8 else 1
-	q = {'shareurl': getBDLink(sys.argv[longFlag])}
-	if argc > longFlag * 2:
-		q['pass'] = sys.argv[-1][-4:]
-	token = rest('sharefiles', q)['token']
-	uk = None
-cur_path = step('f')
+try:
+	if argc == 1:
+		token, uk = login()
+	else:
+		longFlag = 2 if sys.argv[1].find('链接') > -1 and len(sys.argv[1]) < 8 else 1
+		q = {'shareurl': getBDLink(sys.argv[longFlag])}
+		if argc > longFlag * 2:
+			q['pass'] = sys.argv[-1][-4:]
+		token = rest('sharefiles', q)['token']
+		uk = None
+	cur_path = step('f')
+except Exception as e:
+	print(e)
+	sys.exit(1)
 while True:
 	cmd = input('input:')
-	cur_path = step(cmd, cur_path)
+	try:
+		cur_path = step(cmd, cur_path)
+	except Exception as e:
+		print(e)
