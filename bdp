@@ -83,7 +83,7 @@ def step(cmd, cur_path = '/'):
 	elif cmd == 'f':
 		cd(cur_path, False)
 	elif cmd == 'r':
-		cd(cur_path)
+		cd('/')
 	elif cmd == 'b':
 		cur_path = cur_path[:cur_path.rfind('/')+1]
 		cd(cur_path)
