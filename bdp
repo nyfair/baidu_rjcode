@@ -6,7 +6,7 @@ import os
 import sys
 from urllib import parse, request
 
-BDP_API = 'http://api.pescn.top/'
+BDP_API = 'http://api.usmusic.cn/'
 ARIA2_RPC = 'http://localhost:6800/jsonrpc'
 PRESET_OPTS = { 'continue': 'true', 'max-connection-per-server': 16, 'split': 16, 'min-split-size': '1M',
 								'user-agent': 'netdisk;5.5.2.0;PC;PC-Windows;10.0.14393;WindowsBaiduNetdisk',
@@ -83,9 +83,11 @@ def step(cmd, cur_path = '/'):
 	elif cmd == 'f':
 		cd(cur_path, False)
 	elif cmd == 'r':
-		cd('/')
+		cd(cur_path)
 	elif cmd == 'b':
-		cur_path = cur_path[:cur_path.rfind('/')+1]
+		cur_path = cur_path[:cur_path.rfind('/')]
+		if cur_path == '':
+			cur_path = '/'
 		cd(cur_path)
 	elif cmd.isdigit():
 		f = datas[cur_path][int(cmd)-1]
