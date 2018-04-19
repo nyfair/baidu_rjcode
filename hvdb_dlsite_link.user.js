@@ -19,12 +19,4 @@ if (dlNode.value) {
   ele.className = 'form-control'
   ele.value = dlNode.value
   dlNode.parentNode.replaceChild(ele, dlNode.previousElementSibling)
-  
-  var textarea = document.createElement("textarea")
-  document.body.appendChild(textarea)
-  textarea.value = dlNode.value
-  textarea.select()
-  textarea.focus()
-  document.execCommand("copy")
-  textarea.parentNode.removeChild(textarea)
 }
