@@ -19,5 +19,10 @@ if (dlNode.value) {
   ele.className = 'form-control'
   ele.value = dlNode.value
   dlNode.parentNode.replaceChild(ele, dlNode.previousElementSibling)
-  GM_setClipboard(dlNode.value)
+  
+  document.addEventListener('keydown', function(e) {
+    if (e.keyCode == 67 && e.ctrlKey) {
+      GM_setClipboard('RJ' + rj + '|' + dlNode.value)
+    }
+  })
 }
