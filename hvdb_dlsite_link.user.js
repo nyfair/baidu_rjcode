@@ -5,7 +5,7 @@
 // @version     0.1
 // @author      bdtrysb
 // @match       *://hvdb.me/Dashboard/WorkDetails/*
-// @grant       none
+// @grant       GM_setClipboard
 // ==/UserScript==
 
 var titleNode = document.querySelector('h2')
@@ -19,4 +19,5 @@ if (dlNode.value) {
   ele.className = 'form-control'
   ele.value = dlNode.value
   dlNode.parentNode.replaceChild(ele, dlNode.previousElementSibling)
+  GM_setClipboard(dlNode.value)
 }
