@@ -4,13 +4,13 @@
 // @description Copy Download Link From File Hosting Site
 // @version     0.1
 // @author      bdtrysb
-// @match       *://mx-sh.net/*
+// @match       *://mexa.sh/*
 // @match       *://rapidgator.net/*
 // @grant       GM_setClipboard
 // ==/UserScript==
 
 rule = {
-  "mx-sh.net": /document.location = '(.+?)'/,
+  "mexa.sh": /document.location = '(.+?)'/,
   "rapidgator.net": /return '(.+?)'/
 }
 document.addEventListener('keydown', function(e) {
