@@ -1,0 +1,1 @@
+pythonw.exe -c "import subprocess,sys;from urllib.parse import quote,unquote;v=sys.argv[1];l=v.find('&dn=')+4;r=v.find('&tr=');x=v[:l]+quote(unquote(v[l:r]))+v[r:];subprocess.Popen(['D:\\mpc\\utorrent.exe',x],creationflags=8)" "%1"
