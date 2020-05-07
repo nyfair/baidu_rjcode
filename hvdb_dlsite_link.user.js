@@ -14,16 +14,22 @@ var dlsite = 'http://www.dlsite.com/maniax/work/=/product_id/RJ' + rj + '.html'
 titleNode.innerHTML = '<a href="' + dlsite + '" target="_blank">DLSite Links</a> RJ' + rj
 
 var paste = 'RJ' + rj
+var mega = paste
 var dlNode = document.querySelector('#Download')
 if (dlNode.value) {
   var ele = document.createElement('input')
   ele.className = 'form-control'
   ele.value = dlNode.value
   dlNode.parentNode.replaceChild(ele, dlNode.previousElementSibling)
-  paste += '|' + dlNode.value
+  mega = dlNode.value
 }
 document.addEventListener('keydown', function(e) {
   if (e.keyCode == 67 && e.ctrlKey) {
     GM_setClipboard(paste)
+  }
+})
+document.addEventListener('keydown', function(e) {
+  if (e.keyCode == 88 && e.ctrlKey) {
+    GM_setClipboard(mega)
   }
 })
