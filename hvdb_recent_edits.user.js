@@ -8,17 +8,20 @@
 // @grant       GM_setClipboard
 // ==/UserScript==
 
-var changed = []
+var changed = new Set()
+var count = 0
 for (var wnode of document.querySelectorAll('.col-md-12')) {
   var txt = wnode.innerText
   var offset = txt.indexOf('Download Link')
   if ((offset > -1) && txt.substring(offset+21, offset+45) != '[Initial Creation] to []') {
     window.open(wnode.querySelector('a').href)
-    changed.push('RJ' + wnode.querySelector('a').innerText.padStart(2, '0'))
+    changed.add('RJ' + wnode.querySelector('a').innerText.padStart(2, '0'))
+    count += 1
   }
 }
 document.addEventListener('keydown', function(e) {
   if (e.keyCode == 67 && e.ctrlKey) {
-    GM_setClipboard(changed.join('|'))
+    GM_setClipboard(Array.from(changed).join('|'))
   }
 })
+document.querySelector('h2').innerText += ' ' + count + 'new'
