@@ -14,9 +14,12 @@ for (var wnode of document.querySelectorAll('.col-md-12')) {
   var txt = wnode.innerText
   var offset = txt.indexOf('Download Link')
   if ((offset > -1) && txt.substring(offset+21, offset+45) != '[Initial Creation] to []') {
-    window.open(wnode.querySelector('a').href)
-    changed.add('RJ' + wnode.querySelector('a').innerText.padStart(2, '0'))
-    count += 1
+    var rj = 'RJ' + wnode.querySelector('a').innerText.padStart(2, '0')
+    if (!changed.has(rj)) {
+        window.open(wnode.querySelector('a').href)
+        changed.add(rj)
+        count += 1
+    }
   }
 }
 document.addEventListener('keydown', function(e) {
